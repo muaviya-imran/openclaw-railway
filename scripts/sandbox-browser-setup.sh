@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# Railway compatibility: Skip Docker operations since Docker-in-Docker is not available
+if [ -n "$RAILWAY_ENVIRONMENT" ] || [ -n "$RAILWAY_PROJECT_ID" ] || [ ! -S /var/run/docker.sock ]; then
+    echo "🚂 Railway environment detected - skipping Docker browser sandbox setup"
+    echo "✅ Using host browser environment (Railway-compatible mode)"
+    exit 0
+fi
+
 # Inherit DOCKER_HOST if set, or default to socket proxy
 export DOCKER_HOST="${DOCKER_HOST:-tcp://docker-proxy:2375}"
 
